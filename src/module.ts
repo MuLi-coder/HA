@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { Controller, Get, Post, Req, Res, Injectable } from '@nestjs/common';
 import { Request, Response } from 'express';
-import Redis from 'ioredis';
+import { MongoClient, Collection } from 'mongodb';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import { randomBytes, timingSafeEqual } from 'crypto';
@@ -14,9 +14,16 @@ const DEFAULTS = { base_url:'https://api.deepseek.com', model_fast:'deepseek-fla
 
 @Injectable()
 class Store {
-  private client = new Redis(process.env.REDIS_URL || 'redis://127.0.0.1:6379', { lazyConnect:true, maxRetriesPerRequest:2 });
-  async get(k:string, fallback:any={}) { try { if(this.client.status==='wait') await this.client.connect(); const v=await this.client.get('zh:'+k); return v?JSON.parse(v):fallback; } catch { return fallback; } }
-  async set(k:string,v:any) { if(this.client.status==='wait') await this.client.connect(); await this.client.set('zh:'+k,JSON.stringify(v)); }
+  private clientPromise?: Promise<MongoClient>;
+  private collectionPromise?: Promise<Collection>;
+  private collection() {
+    if (!process.env.MONGODB_URI) throw new Error('缺少 MONGODB_URI 环境变量，请在 Vercel 项目设置中配置 MongoDB Atlas 连接串。');
+    if (!this.clientPromise) this.clientPromise = new MongoClient(process.env.MONGODB_URI, { maxPoolSize: 5, serverSelectionTimeoutMS: 10000 }).connect();
+    if (!this.collectionPromise) this.collectionPromise = this.clientPromise.then(client => client.db(process.env.MONGODB_DATABASE || 'zhiheng').collection('app_state'));
+    return this.collectionPromise;
+  }
+  async get(k:string, fallback:any={}) { const col=await this.collection(); const row=await col.findOne({_id:'zh:'+k} as any); return row ? row.value : fallback; }
+  async set(k:string,v:any) { const col=await this.collection(); await col.updateOne({_id:'zh:'+k} as any,{$set:{value:v,updatedAt:new Date()}},{upsert:true}); }
 }
 
 @Controller()
