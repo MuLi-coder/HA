@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>知衡 · 个人健康助手</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<header>
+  <div class="brand">知衡<span>个人健康助手</span></div>
+  <nav id="nav">
+    <button data-nav="chat" class="active">对话</button>
+    <button data-nav="profile">我的档案</button>
+    <button data-nav="image">我的画像</button>
+    <button data-nav="settings">设置</button>
+    <button data-nav="about">关于</button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- ============ 对话页 ============ -->
+  <section id="view-chat" class="view active">
+    <div id="messages" class="messages"></div>
+    <div class="composer">
+      <div class="composer-bar">
+        <label class="deep-toggle" title="深度分析会使用更强的模型并开启思考，回答更慢、更贵">
+          <input type="checkbox" id="deepMode"> 深度分析（更慢 / 更强 / 更贵）
+        </label>
+        <button id="clearBtn" class="ghost" title="清空当前对话历史">清空对话</button>
+      </div>
+      <div class="composer-input">
+        <button id="imgBtn" class="img-btn" title="添加图片（也可以直接粘贴截图）">📷</button>
+        <input type="file" id="imgFile" accept="image/*" multiple hidden>
+        <textarea id="input" rows="3" placeholder="想聊点什么？也可以发图片，例如：帮我看看这张化验单 / 这盒药能不能吃"></textarea>
+        <button id="sendBtn">发送</button>
+      </div>
+      <div id="imgPreview" class="img-preview"></div>
+      <div class="hint">Enter 发送 · Shift+Enter 换行 · 可粘贴图片或点 📷 添加</div>
+    </div>
+  </section>
+
+  <!-- ============ 我的档案 ============ -->
+  <section id="view-profile" class="view">
+    <div class="page-head">
+      <h1>我的档案</h1>
+      <p>填得越完整，回答越贴合你的情况。所有数据只存在你本机。留空的项就当作“不知道”，助手不会乱猜。</p>
+    </div>
+
+    <form id="profileForm" class="card">
+      <fieldset>
+        <legend>① 基本信息</legend>
+        <div class="grid">
+          <label>昵称<input data-k="基本.昵称"></label>
+          <label>性别
+            <select data-k="基本.性别"><option value="">—</option><option>男</option><option>女</option><option>其他</option></select>
+          </label>
+          <label>出生年份<input data-k="基本.出生年份" type="number" placeholder="如 2004"></label>
+          <label>身高（cm）<input data-k="基本.身高cm" type="number" step="0.1" placeholder="如 175"></label>
+          <label>体重（kg）<input data-k="基本.体重kg" type="number" step="0.1" placeholder="如 65"></label>
+          <label>职业 / 身份<input data-k="基本.职业" placeholder="如 大学生"></label>
+          <label>每日久坐时长（小时）<input data-k="基本.每日久坐小时" type="number" step="0.5" placeholder="如 8"></label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>② 健康背景</legend>
+        <div class="grid">
+          <label>疾病史（慢性病、确诊过的病）<textarea data-k="健康背景.疾病史" rows="2" placeholder="如 无 / 有过敏性鼻炎"></textarea></label>
+          <label>家族病史<textarea data-k="健康背景.家族史" rows="2" placeholder="如 父母有高血压"></textarea></label>
+          <label>过敏史（药物、食物）<textarea data-k="健康背景.过敏史" rows="2" placeholder="如 青霉素过敏"></textarea></label>
+          <label>手术史<textarea data-k="健康背景.手术史" rows="2" placeholder="如 无"></textarea></label>
+          <label>长期用药 / 保健品<textarea data-k="健康背景.长期用药" rows="2" placeholder="如 无 / 每天吃维生素D"></textarea></label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>③ 生活方式</legend>
+        <div class="grid">
+          <label>平均每晚睡眠（小时）<input data-k="生活方式.平均睡眠小时" type="number" step="0.5" placeholder="如 6.5"></label>
+          <label>通常入睡时间<input data-k="生活方式.入睡时间" placeholder="如 凌晨1点"></label>
+          <label>运动频率<input data-k="生活方式.运动频率" placeholder="如 每周2次慢跑"></label>
+          <label>饮食结构<input data-k="生活方式.饮食结构" placeholder="如 外卖为主、蔬菜偏少"></label>
+          <label>吸烟
+            <select data-k="生活方式.吸烟"><option value="">—</option><option>不吸烟</option><option>偶尔</option><option>每天</option></select>
+          </label>
+          <label>饮酒
+            <select data-k="生活方式.饮酒"><option value="">—</option><option>不饮酒</option><option>偶尔</option><option>经常</option></select>
+          </label>
+          <label>咖啡因（咖啡 / 茶）<input data-k="生活方式.咖啡因" placeholder="如 每天2杯咖啡"></label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>④ 心理与认知</legend>
+        <div class="grid">
+          <label>近期压力水平
+            <select data-k="心理认知.压力水平"><option value="">—</option><option>低</option><option>中等</option><option>较高</option><option>很高</option></select>
+          </label>
+          <label>情绪状态<textarea data-k="心理认知.情绪状态" rows="2" placeholder="如 整体平稳，偶尔焦虑"></textarea></label>
+          <label>焦虑 / 抑郁相关史<textarea data-k="心理认知.焦虑抑郁史" rows="2" placeholder="如 无 / 曾因焦虑就诊"></textarea></label>
+          <label>注意力 / 记忆力困扰<textarea data-k="心理认知.注意力记忆力" rows="2" placeholder="如 最近总觉得记不住事"></textarea></label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>⑤ 体检指标（可选，逐条添加）</legend>
+        <div id="labs"></div>
+        <button type="button" id="addLab" class="ghost">+ 添加一条体检指标</button>
+        <p class="muted">格式示例：日期 2026-08-15 · 指标 空腹血糖 · 数值 5.2 · 单位 mmol/L · 参考范围 3.9–6.1</p>
+      </fieldset>
+
+      <fieldset>
+        <legend>⑥ 目标与偏好</legend>
+        <div class="grid">
+          <label>最关心的健康方向<textarea data-k="目标偏好.关注方向" rows="2" placeholder="如 睡眠、颈椎、减脂"></textarea></label>
+          <label>希望的回答详细程度
+            <select data-k="目标偏好.回答风格"><option value="要点式">要点式（默认）</option><option value="详细">详细展开</option></select>
+          </label>
+          <label>语言风格偏好<input data-k="目标偏好.语言风格" placeholder="如 严肃活泼、偶尔俏皮"></label>
+        </div>
+      </fieldset>
+
+      <div class="form-actions">
+        <button type="button" id="saveProfile" class="primary">保存档案</button>
+        <span id="profileStatus" class="status"></span>
+      </div>
+    </form>
+
+  </section>
+
+  <!-- ============ 我的画像 ============ -->
+  <section id="view-image" class="view">
+    <div class="page-head">
+      <h1>我的画像</h1>
+      <p>AI 会从你们的对话里自动提炼你的<b>长期信息</b>（如过敏史、生活习惯）和<b>近期状态</b>（如“这周熬夜”）。在这里可以查看、修改和删除。画像只存本机。</p>
+    </div>
+
+    <div class="card">
+      <div class="image-toolbar">
+        <label class="deep-toggle" title="开启后，每累计 5 条消息自动提炼一次">
+          <input type="checkbox" id="autoRefine"> 自动提炼（每 5 条消息一次）
+        </label>
+        <button type="button" id="refineNow" class="primary">立即提炼</button>
+        <span id="refineStatus" class="status"></span>
+      </div>
+      <p class="muted" id="refineHint"></p>
+    </div>
+
+    <div class="card">
+      <h2>长期画像 <span class="muted">（稳定信息，可编辑、删除）</span></h2>
+      <div id="imageList" class="image-list"></div>
+      <div class="image-add">
+        <input id="newImageContent" placeholder="手动添加一条，如：对花粉过敏">
+        <input id="newImageDomain" placeholder="领域（如 健康背景）" list="domainList">
+        <datalist id="domainList">
+          <option value="健康背景"></option>
+          <option value="生活方式"></option>
+          <option value="心理认知"></option>
+          <option value="性健康"></option>
+          <option value="关注方向"></option>
+          <option value="其他"></option>
+        </datalist>
+        <button type="button" id="addImage" class="ghost">添加</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>近期状态 <span class="muted">（临时信息，7 天后不再影响回答）</span></h2>
+      <div id="recentList" class="image-list"></div>
+    </div>
+  </section>
+
+  <!-- ============ 设置 ============ -->
+  <section id="view-settings" class="view">
+    <div class="page-head">
+      <h1>设置</h1>
+      <p>至少需要填入 DeepSeek API Key 才能对话。Key 只保存在你本机，不会上传到别处。</p>
+    </div>
+    <div class="card">
+      <label class="field">API Key
+        <input id="cfgKey" type="password" placeholder="sk-...（留空表示不修改）">
+        <span id="keyHint" class="muted"></span>
+      </label>
+      <label class="field">接口地址（一般不用改）
+        <input id="cfgBase" placeholder="https://api.deepseek.com">
+      </label>
+      <label class="field">快速模式模型名
+        <input id="cfgFast" placeholder="deepseek-flash">
+      </label>
+      <label class="field">深度分析模型名
+        <input id="cfgDeep" placeholder="deepseek-v4-pro">
+      </label>
+      <label class="field">temperature（0–2，默认 1，一般不用改）
+        <input id="cfgTemp" type="number" step="0.1" min="0" max="2" placeholder="1.0">
+      </label>
+      <label class="field">远程访问密码（手机等设备访问时使用，留空表示不修改）
+        <input id="cfgAccessPw" type="password" inputmode="numeric" placeholder="6 位数字" autocomplete="new-password">
+        <span id="accessPwHint" class="muted"></span>
+      </label>
+      <div class="form-actions">
+        <button type="button" id="saveCfg" class="primary">保存设置</button>
+        <button type="button" id="clearKey" class="ghost">清除已保存的 Key</button>
+        <span id="cfgStatus" class="status"></span>
+      </div>
+      <p class="muted">去哪里申请 Key：打开 <a href="https://platform.deepseek.com" target="_blank">platform.deepseek.com</a> → 注册 → 创建 API Key → 充值少量金额即可。</p>
+    </div>
+  </section>
+
+  <!-- ============ 关于 ============ -->
+  <section id="view-about" class="view">
+    <div class="card">
+      <h1>关于「知衡」</h1>
+      <p>知衡是一个跑在你电脑上的个人健康助手：接入大模型、遵循你设定的人设和方法论，并参考你录入的个人档案来回答。</p>
+      <h2>它能做什么</h2>
+      <ul>
+        <li>解答身体健康、用脑健康（睡眠 / 精力 / 情绪 / 认知）、性健康、养生方面的问题；</li>
+        <li>按“长期健康优先”的原则，客观、全面、靠谱地回答，并标注证据等级；</li>
+        <li>结合你的档案，给出更贴合你情况的建议。</li>
+      </ul>
+      <h2>它不能做什么</h2>
+      <ul>
+        <li>不诊断疾病、不开处方、不给具体用药剂量；</li>
+        <li>不替代医生面诊和正规治疗。</li>
+      </ul>
+      <h2>你的数据</h2>
+      <ul>
+        <li>所有档案和对话历史都保存在本机 <code>data</code> 文件夹里，不会自动上传；</li>
+        <li>只有当你在对话中提问时，才会把“与问题相关的最小片段”发给模型服务商用于生成回答。</li>
+      </ul>
+      <h2>免责声明</h2>
+      <p class="warn">本助手提供健康科普与生活方式建议，<b>不提供诊断、处方或治疗方案</b>，不能替代医生面诊。急症请立即拨打 120。请勿在此输入他人隐私信息。</p>
+    </div>
+  </section>
+
+</main>
+
+<!-- 首次引导 -->
+<div id="onboard" class="modal hidden">
+  <div class="modal-box">
+    <h2>欢迎使用「知衡」</h2>
+    <p>你可以先花两分钟填写个人档案，这样回答会更贴合你的身体情况；也可以先跳过，直接开始聊天，以后随时再填。</p>
+    <p class="muted">小提醒：先在右上角「设置」里填入 API Key，才能正常对话。</p>
+    <div class="modal-actions">
+      <button id="goProfile" class="primary">去填写档案</button>
+      <button id="skipOnboard" class="ghost">先跳过，直接聊</button>
+    </div>
+  </div>
+</div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
