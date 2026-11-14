@@ -1,0 +1,8 @@
+{
+  "api_key": "sk-0b34eefbaf58401e91673cd842b7b87e",
+  "base_url": "https://api.deepseek.com",
+  "model_fast": "deepseek-flash",
+  "model_deep": "deepseek-v4-pro",
+  "temperature": 1.0,
+  "access_password": "712980"
+}
