@@ -1,1 +1,0 @@
-{"version":2,"buildCommand":"npm run vercel-build","functions":{"app.js":{"maxDuration":60}},"rewrites":[{"source":"/(.*)","destination":"/app.js"}]}
