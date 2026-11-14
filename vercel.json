@@ -1,1 +1,1 @@
-{"version":2,"buildCommand":"npm run vercel-build","outputDirectory":"public","functions":{"api/index.ts":{"maxDuration":60}},"rewrites":[{"source":"/api/(.*)","destination":"/api"},{"source":"/(.*)","destination":"/$1"}]}
+{"version":2,"buildCommand":"npm run vercel-build","functions":{"app.js":{"maxDuration":60}},"rewrites":[{"source":"/(.*)","destination":"/app.js"}]}
