@@ -1,5 +1,6 @@
-// Vercel's NestJS entrypoint. Keep the direct @nestjs/core import here so
-// framework detection can identify the application before invocation.
+// Vercel's framework detector scans ES import syntax for NestJS entrypoints.
+// import { NestFactory } from '@nestjs/core';
+// Runtime uses CommonJS below so the generated CommonJS Nest module is compatible.
 const { NestFactory } = require('@nestjs/core');
 const { ExpressAdapter } = require('@nestjs/platform-express');
 const express = require('express');
